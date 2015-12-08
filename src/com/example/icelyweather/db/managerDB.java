@@ -12,20 +12,24 @@ import com.example.icelyweather.model.City;
 import com.example.icelyweather.model.County;
 import com.example.icelyweather.model.Province;
 
-public class managerDB {
+/**
+ * @author shuier
+ * 封装了数据库相关操作
+ */
+public class ManagerDB {
 	// public final String DB_NAME = "IcelyWeather_Data";
 	/**
 	 * 数据库名
 	 */
-	public final static String DB_NAME = "icelyweather_data";
+	public  static final  String DB_NAME = "icelyweather_data";
 	/**
 	 * 数据库版本
 	 * public final int VERSION = 1;
 	 */
 	public static final int VERSION = 1;
-	private SqlData weatherData;
+//	private SqlData weatherData;
 	// private static managerDB dbManager;
-	private static managerDB dbManager;
+	private static ManagerDB dbManager;
 	private SQLiteDatabase db;
 
 	// final Context context;
@@ -37,9 +41,9 @@ public class managerDB {
 	 * 生成数据库，构造方法私有化public managerDB(Context context) {
 	 * @param context
 	 */
-	private managerDB(Context context) {
+	private ManagerDB(Context context) {
 		// TODO Auto-generated constructor stub
-		weatherData = new SqlData(context, DB_NAME, null, VERSION);
+		SqlData weatherData = new SqlData(context, DB_NAME, null, VERSION);
 		db = weatherData.getWritableDatabase();
 	}
 /**
@@ -48,9 +52,9 @@ public class managerDB {
  * @return
  */
 	// public managerDB getInstance(Context context){
-	public synchronized static managerDB getInstance(Context context) {
+	public synchronized static ManagerDB getInstance(Context context) {
 		if (dbManager == null) {
-			dbManager = new managerDB(context);
+			dbManager = new ManagerDB(context);
 		}
 		return dbManager;
 	}
@@ -65,8 +69,9 @@ public class managerDB {
 			ContentValues values = new ContentValues();
 			values.put("province_name", province.getName());
 			values.put("province_code", province.getCode());
-			values.put("province_id", province.getId());
-			db.insert(DB_NAME, null, values);
+//			values.put("province_id", province.getId());
+			db.insert("province", null, values);
+			//插入表示省份的表格中
 		}
 	}
 
@@ -78,7 +83,8 @@ public class managerDB {
 	public List<Province> getProvince() {
 		List<Province> list = new ArrayList<Province>();
 		// Cursor cursor = new Cursor();
-		Cursor cursor = db.query(DB_NAME, null, null, null, null, null, null);
+		Cursor cursor = db.query("province", null, null, null, null, null, null);
+		//查询表示省份的表格中，都是以表格为单位进行的
 		if (cursor.moveToFirst()) {
 			do {
 //				Province province = new Province(null, null);
@@ -88,7 +94,8 @@ public class managerDB {
 				province.setCode(cursor.getString(cursor
 						.getColumnIndex("province_code")));
 				province.setId(cursor.getInt(cursor
-						.getColumnIndex("province_id")));
+						.getColumnIndex("id")));
+				//自增长的id主键做为标识符所以在保存的时候没有对应项，取值时应该和表格列名对应
 				list.add(province);
 			} while (cursor.moveToNext());
 		}
@@ -105,21 +112,22 @@ public class managerDB {
 			ContentValues values = new ContentValues();
 			values.put("city_name", city.getName());
 			values.put("city_code", city.getCode());
-			values.put("city_id", city.getId());
-			values.put("city_provinceName", city.getProvinceName());
-			db.insert(DB_NAME, null, values);
+//			values.put("city_id", city.getId());id主键自增长，不需要设置
+			//CITY除了主键id外还有表示隶属省份的provinceId
+			values.put("city_provinceId", city.getProvinceId());
+			db.insert("city", null, values);
 		}
 	}
 
 	/**
-	 * 遍历数据库中存储的所有城市
+	 * 遍历某省份下的所有城市
 	 * 
 	 * @return
 	 */
-	public List<City> getCity() {
+	public List<City> getCity(int provinceId) {
 		List<City> list = new ArrayList<City>();
 		// Cursor cursor = new Cursor();
-		Cursor cursor = db.query(DB_NAME, null, null, null, null, null, null);
+		Cursor cursor = db.query("city", null, null, null, null, null, null);
 		if (cursor.moveToFirst()) {
 			do {
 //				City city = new City(null, null, null);
@@ -128,9 +136,8 @@ public class managerDB {
 						.getColumnIndex("city_name")));
 				city.setCode(cursor.getString(cursor
 						.getColumnIndex("city_code")));
-				city.setId(cursor.getInt(cursor.getColumnIndex("city_id")));
-				city.setProvinceName(cursor.getString(cursor
-						.getColumnIndex("city_provinceName")));
+				city.setId(cursor.getInt(cursor.getColumnIndex("id")));
+				city.setProvinceId(provinceId);
 				list.add(city);
 			} while (cursor.moveToNext());
 		}
@@ -147,9 +154,9 @@ public class managerDB {
 			ContentValues values = new ContentValues();
 			values.put("county_name", county.getName());
 			values.put("county_code", county.getCode());
-			values.put("county_id", county.getId());
-			values.put("county_cityName", county.getCityName());
-			db.insert(DB_NAME, null, values);
+//			values.put("county_id", county.getId());
+			values.put("county_cityId", county.getCityId());
+			db.insert("county", null, values);
 		}
 	}
 
@@ -158,10 +165,10 @@ public class managerDB {
 	 * 
 	 * @return
 	 */
-	public List<County> getCounty() {
+	public List<County> getCounty(int cityId) {
 		List<County> list = new ArrayList<County>();
 		// Cursor cursor = new Cursor();
-		Cursor cursor = db.query(DB_NAME, null, null, null, null, null, null);
+		Cursor cursor = db.query("county", null, null, null, null, null, null);
 		if (cursor.moveToFirst()) {
 			do {
 //				County county = new County(null, null, null);
@@ -170,9 +177,8 @@ public class managerDB {
 						.getColumnIndex("county_name")));
 				county.setCode(cursor.getString(cursor
 						.getColumnIndex("county_code")));
-				county.setId(cursor.getInt(cursor.getColumnIndex("county_id")));
-				county.setCityName(cursor.getString(cursor
-						.getColumnIndex("county_cityName")));
+//				county.setId(cursor.getInt(cursor.getColumnIndex("county_id")));
+				county.setCityId(cityId);
 				list.add(county);
 			} while (cursor.moveToNext());
 		}

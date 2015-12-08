@@ -2,9 +2,9 @@ package com.example.icelyweather.model;
 
 public class County {
 	// String name, code, cityName;
-	private String name, code, cityName;
+	private String name, code ;
 	private int id;
-
+	private int cityId;
 	// public County(String name, String code, String cityName) {
 	// // TODO Auto-generated constructor stub
 	// this.name = name;
@@ -18,7 +18,7 @@ public class County {
 //		return county.id;
 //	}
 	public int getId() {
-		return this.id;
+		return id;
 	}
 
 	public void setName(String name) {
@@ -26,7 +26,7 @@ public class County {
 	}
 
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	public void setCode(String code) {
@@ -34,14 +34,14 @@ public class County {
 	}
 
 	public String getCode() {
-		return this.code;
+		return code;
 	}
 
-	public void setCityName(String cityName) {
-		this.cityName = cityName;
+	public void setCityId(int cityId) {
+		this.cityId = cityId;
 	}
 
-	public String getCityName() {
-		return this.cityName;
+	public int getCityId() {
+		return cityId;
 	}
 }

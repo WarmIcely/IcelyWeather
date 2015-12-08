@@ -21,14 +21,14 @@ private int id;//为每个省份添加一个标示符
 	}
 
 	public int  getId() {
-		return this.id;
+		return id;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	public void setCode(String Code) {
@@ -36,6 +36,6 @@ private int id;//为每个省份添加一个标示符
 	}
 
 	public String getCode() {
-		return this.code;
+		return code;
 	}
 }

@@ -9,15 +9,15 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @author shuier 对从服务器取来的数据创建sqlite数据库进行管理
  */
 public class SqlData extends SQLiteOpenHelper {
-	final static String CREAT_PROVIENCE = "creat table provience ("
-			+ "id integer primary key autoincreament" + "provience_name text"
-			+ "provience_code text)";
-	final static String CREAT_CITY = "creat table city ("
-			+ "id integer primary key autoincreament" + "city_name text"
-			+ "city_code text" + "province_name)";
-	final static String CREAT_COUNTY = "creat table county ("
-			+ "id integer primary key autoincreament" + "county_name text"
-			+ "county_code text" + "city_name)";
+public static	final  String CREAT_PROVINCE = "create table province ("
+			+ "id integer primary key autoincrement," + "province_name text,"
+			+ "province_code text)";
+public static	final String CREAT_CITY = "create table city ("
+			+ "id integer primary key autoincrement," + "city_name text,"
+			+ "city_code text," + "province_name)";
+public	static final  String CREAT_COUNTY = "create table county ("
+			+ "id integer primary key autoincrement," + "county_name text,"
+			+ "county_code text," + "city_name)";
 
 	/**
 	 * @param context
@@ -34,14 +34,13 @@ public class SqlData extends SQLiteOpenHelper {
 		super(context, name, factory, version);
 		// TODO Auto-generated constructor stub
 	}
-
 	/**
 	 * 执行建表语句，第一次创建数据库时会执行该方法
 	 */
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
-		db.execSQL(CREAT_PROVIENCE);
+		db.execSQL(CREAT_PROVINCE);
 		db.execSQL(CREAT_CITY);
 		db.execSQL(CREAT_COUNTY);
 	}
