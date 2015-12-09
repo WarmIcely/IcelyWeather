@@ -5,7 +5,10 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -72,6 +75,13 @@ public class ChooseAreaActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area_layout);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		if (prefs.getBoolean("citySelect", false)){
+			Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		}
 		titleText = (TextView) this.findViewById(R.id.title_text);
 		areaList = (ListView) this.findViewById(R.id.area_list);
 		adapter = new ArrayAdapter<String>(this,
@@ -89,6 +99,12 @@ public class ChooseAreaActivity extends Activity {
 				} else if (selectLevel == CITY_LEVEL) {
 					selectCity = cityList.get(position);
 					queryCounties();
+				}else if(selectLevel == COUNTY_LEVEL){
+					String countyCode = countyList.get(position).getCode();
+					Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+					intent.putExtra("county_code", countyCode);
+					startActivity(intent);
+					finish();
 				}
 			}
 		});
@@ -233,16 +249,5 @@ public class ChooseAreaActivity extends Activity {
 		} else {
 			finish();
 		}
-	}
-@Override
-	public void onBackPressed() {
-		if (selectLevel == COUNTY_LEVEL) {
-			queryCities();
-		} else if (selectLevel == CITY_LEVEL) {
-			queryProvinces();
-		} else {
-			finish();
-		}
-
 	}
 }
