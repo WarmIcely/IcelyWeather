@@ -68,6 +68,7 @@ public class ChooseAreaActivity extends Activity {
 	 * 选中的城市
 	 */
 	private City selectCity;
+	private  boolean isFromWeatherActivity;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +76,9 @@ public class ChooseAreaActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area_layout);
+		isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		if (prefs.getBoolean("citySelect", false)){
+		if (prefs.getBoolean("citySelect", false)&&!isFromWeatherActivity){
 			Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
 			startActivity(intent);
 			finish();
@@ -158,7 +160,7 @@ public class ChooseAreaActivity extends Activity {
 			queryFormServer(selectCity.getCode(), "county");
 		}
 	}
-
+//private关键词修饰的表示的是相同类中可存取，不可跨越类
 	private void queryFormServer(final String code, final String tableName) {
 		String address;
 		if (!TextUtils.isEmpty(code)) {
@@ -242,11 +244,13 @@ public class ChooseAreaActivity extends Activity {
 		super.onBackPressed();
 		if (selectLevel == COUNTY_LEVEL) {
 			queryCities();
-		} else
-
-		if (selectLevel == CITY_LEVEL) {
+		} else if (selectLevel == CITY_LEVEL) {
 			queryProvinces();
 		} else {
+			if(isFromWeatherActivity){
+				Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+				startActivity(intent);
+			}	
 			finish();
 		}
 	}

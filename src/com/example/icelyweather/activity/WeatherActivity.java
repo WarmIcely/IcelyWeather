@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.icelyweather.R;
+import com.example.icelyweather.service.AutoUpdateService;
 import com.example.icelyweather.util.AnalyseData;
 import com.example.icelyweather.util.HttpCallbackListener;
 import com.example.icelyweather.util.HttpUtil;
@@ -61,7 +62,7 @@ private Button refreshWeather;
 		switch(v.getId()){
 		case R.id.switch_city:
 			Intent intent = new Intent(this,ChooseAreaActivity.class);
-			intent.putExtra("form_weather_activity", true);
+			intent.putExtra("from_weather_activity", true);
 			startActivity(intent);
 			finish();
 			break;
@@ -134,6 +135,8 @@ private Button refreshWeather;
 		});
 	}
 	private void showWeather(){
+//		第三种直接使用PreferenceManager获取SharedPreferences对象的方法，以包名做为默认
+//		的存储表名，每次使用SharedPreferences时都要获取，如果写入需要editor并commit
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 	cityNameText.setText(prefs.getString("cityName", ""));
 	publishText.setText(prefs.getString("publishText", ""));
@@ -143,5 +146,7 @@ private Button refreshWeather;
 	currentDateText.setText(prefs.getString("currentDate", ""));
 	weatherInfoLayout.setVisibility(View.VISIBLE);
 	cityNameText.setVisibility(View.VISIBLE);
+	Intent intent = new Intent(WeatherActivity.this,AutoUpdateService.class);
+	startService(intent);
 	}
 }
